@@ -8,7 +8,7 @@
 
 To install the Watson Speech Plugin in your Cordova Project, run in terminal:
 ```shell
-cordova plugin add https://github.com/CognitiveBuild/WatsonSpeechPlugin.git
+cordova plugin add https://github.com/ShreeyaJoshi/WatsonSpeechPlugin2.git
 ```
 
 # Credentials
