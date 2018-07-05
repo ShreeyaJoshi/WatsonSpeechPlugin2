@@ -1,0 +1,10 @@
+repositories {
+  flatDir {
+    dirs 'src/main/WatsonSpeechPlugin'
+  }
+}
+
+dependencies {
+  debugImplementation name: 'library-debug', ext: 'aar'
+  releaseImplementation name: 'library-release', ext: 'aar'
+}
