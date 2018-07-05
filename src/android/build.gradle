@@ -1,6 +1,6 @@
 repositories {
   flatDir {
-    dirs 'src/main/WatsonSpeechPlugin'
+    dirs 'src/main/WatsonSpeechPlugin2'
   }
 }
 
