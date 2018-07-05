@@ -1,16 +1,16 @@
 {
-  "name": "WatsonSpeechPlugin",
+  "name": "WatsonSpeechPlugin2",
   "version": "1.0.0",
   "cordova": {
-    "id": "WatsonSpeechPlugin",
+    "id": "WatsonSpeechPlugin2",
     "platforms": [
       "android",
       "ios"
     ]
   },
-  "description": "Watson Speech Cordova Plugin",
-  "repository": "https://github.com/CognitiveBuild/WatsonSpeechPlugin.git",
-  "issue": "https://github.com/CognitiveBuild/WatsonSpeechPlugin/issues",
+  "description": "Watson Speech Cordova Plugin2",
+  "repository": "https://github.com/ShreeyaJoshi/WatsonSpeechPlugin2.git",
+  "issue": "https://github.com/CognitiveBuild/WatsonSpeechPlugin2/issues",
   "keywords": [
     "watson",
     "cordova"
