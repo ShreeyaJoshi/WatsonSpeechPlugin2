@@ -2,9 +2,17 @@ package com.ibm.cio.plugins;
 
 import android.util.Log;
 
-import com.ibm.watson.developer_cloud.android.speech_to_text.v1.ISpeechToTextDelegate;
-import com.ibm.watson.developer_cloud.android.speech_to_text.v1.SpeechToText;
-import com.ibm.watson.developer_cloud.android.speech_to_text.v1.dto.STTConfiguration;
+//import com.ibm.watson.developer_cloud.android.speech_to_text.v1.ISpeechToTextDelegate;
+//import com.ibm.watson.developer_cloud.android.speech_to_text.v1.SpeechToText;
+//import com.ibm.watson.developer_cloud.android.speech_to_text.v1.dto.STTConfiguration;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper;
+import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechResults;
+import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
+
+
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -18,15 +26,22 @@ import org.json.JSONObject;
 /**
  * Created by mihui on 5/29/16.
  */
-public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
+//public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
+public class Stt extends CordovaPlugin{
+	private SpeechToText speechService;
 
+	private MicrophoneInputStream capture;
+	
+	private MicrophoneHelper microphoneHelper;
+	
     private final String TAG = this.getClass().getSimpleName();
 
     private CallbackContext recognizeContext = null;
 
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+    	 	microphoneHelper = new MicrophoneHelper(this);
         super.initialize(cordova, webView);
-        this.initSTT();
+        speechService = this.initSTT();
     }
 
     /**
@@ -40,6 +55,7 @@ public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
     public boolean execute(String action, JSONArray args, final CallbackContext callbackContext){
         if(action.equals("recognize")){
             this.recognizeContext = callbackContext;
+            capture = microphoneHelper.getInputStream(true);
             this.cordova.getThreadPool().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -62,15 +78,26 @@ public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
     }
 
     private void endTransmission() {
-        SpeechToText.sharedInstance().endTransmission();
+        //SpeechToText.sharedInstance().endTransmission();
+    		microphoneHelper.closeInputStream();
     }
+    
+    private RecognizeOptions getRecognizeOptions() {
+        return new RecognizeOptions.Builder().continuous(true).contentType(ContentType.OPUS.toString())
+            .model("en-US_BroadbandModel").interimResults(true).inactivityTimeout(2000).build();
+      }
 
     private void recognize() {
-        SpeechToText.sharedInstance().recognize();
+        //SpeechToText.sharedInstance().recognize();
+    		try {
+    		speechService.recognize(capture, getRecognizeOptions());
+    		}catch (Exception e) {
+                showError(e);
+        }
     }
 
     // initialize the connection to the Watson STT service
-    private boolean initSTT() {
+    /*private boolean initSTT() {
         STTConfiguration sConfig = new STTConfiguration(STTConfiguration.AUDIO_FORMAT_OGGOPUS, STTConfiguration.SAMPLE_RATE_OGGOPUS);
         // DISCLAIMER: please enter your credentials or token factory in the lines below
         sConfig.basicAuthUsername = "<your-username>";
@@ -79,7 +106,22 @@ public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
         SpeechToText.sharedInstance().initWithConfig(sConfig, this);
 
         return true;
+    }*/
+    private SpeechToText initSTT() {
+    	SpeechToText service = new SpeechToText();
+    	String apiKey = "<your-apikey>";
+    	String username = "<your-username>";
+    	String password = "<your-password>";
+    	if(!apiKey.equals("<your-apikey>")) {
+    		service.setApiKey(apiKey);
+    	}
+    	else {
+    		service.setUsernameAndPassword(username, password);
+    	}
+    	service.setEndPoint("<your-enpointurl>");
+    	return service;
     }
+    
 
     private void sendStatus(final String status) {
         Log.d(TAG, "### Status: "+status);
@@ -111,8 +153,8 @@ public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
             PluginResult result = new PluginResult(PluginResult.Status.OK, finalResult);
             result.setKeepCallback(true);
             this.recognizeContext.sendPluginResult(result);
-            SpeechToText.sharedInstance().disConnect();
-            SpeechToText.sharedInstance().stopRecording();
+            //SpeechToText.sharedInstance().disConnect();
+            //SpeechToText.sharedInstance().stopRecording();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -147,7 +189,7 @@ public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
             e.printStackTrace();
             this.sendStatus("onMessage: Error parsing JSON");
             this.recognizeContext.error("Data error");
-            SpeechToText.sharedInstance().stopRecognition();
+            //SpeechToText.sharedInstance().stopRecognition();
         }
     }
 
@@ -161,3 +203,4 @@ public class Stt extends CordovaPlugin implements ISpeechToTextDelegate{
 
     }
 }
+
