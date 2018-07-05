@@ -18,8 +18,8 @@
     <platform name="android">
         <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
 
-        <resource-file src="frameworks/library-debug.aar" target="WatsonSpeechPlugin/library-debug.aar" />
-        <resource-file src="frameworks/library-release.aar" target="WatsonSpeechPlugin/library-release.aar" />
+        <resource-file src="frameworks/library-debug.aar" target="WatsonSpeechPlugin2/library-debug.aar" />
+        <resource-file src="frameworks/library-release.aar" target="WatsonSpeechPlugin2/library-release.aar" />
 
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="Stt">
